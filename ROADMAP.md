@@ -1,38 +1,18 @@
 # Roadmap
 
-This roadmap describes intended direction, not a binding delivery promise.
-Review it regularly and update it as the project learns from users,
-contributors, and implementation constraints.
+## 0.1 MVP
 
-## Now
+- local Markdown parser for shell snippets;
+- allowlisted execution in temporary fixture workspaces;
+- JSON and Markdown reports;
+- deterministic fixture-backed tests and smoke script.
 
-- Define the smallest useful project scope.
-- Keep repository setup, documentation, and verification easy for contributors
-  to follow.
-- Ship small, reviewable improvements.
+## Possible next steps
 
-## Next
+- richer Markdown command annotations for cwd/env/skip reasons;
+- optional package-manager install cache fixtures;
+- JUnit output for CI systems;
+- shell command tokenization that preserves multi-line commands safely;
+- container adapter examples without making containers a hard dependency.
 
-- Add the next capabilities that directly support the project's primary users.
-- Improve tests, docs, and examples around the most used workflows.
-- Reduce setup friction discovered during early use.
-
-## Later
-
-- Consider larger features after the core workflow is stable.
-- Add automation only where it removes repeated maintainer work.
-- Revisit packaging, deployment, or integration options based on real demand.
-
-## Not Planned
-
-- Unrelated platform rewrites without a clear migration path.
-- Mandatory dependencies on a single ecosystem unless the project requires it.
-- Public release dates before maintainers are ready to commit to them.
-
-## Roadmap Review
-
-Before each major or meaningful minor release:
-
-- Move completed user-visible work into `CHANGELOG.md`.
-- Remove stale commitments.
-- Promote only the next reviewable set of work into `Now`.
+Non-goal: becoming a remote CI service. `readmesmoke` should stay local-first.
