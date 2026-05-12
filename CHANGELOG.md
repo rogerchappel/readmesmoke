@@ -1,21 +1,12 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+## 0.1.0 - 2026-05-12
 
-This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
-format and uses semantic versioning when versioned releases are published.
+Initial MVP:
 
-## [Unreleased]
-
-### Added
-
-- Initial project setup.
-
-## Release Links
-
-- Unreleased:
-  `https://github.com/rogerchappel/readmesmoke/compare/...HEAD`
-- Latest release:
-  `https://github.com/rogerchappel/readmesmoke/releases/latest`
-
-Replace placeholder links once the first release tag exists.
+- TypeScript CLI with `scan`, `run`, and `report` commands.
+- Markdown parser for shell fences and `readmesmoke: run` hints.
+- Allowlist planner with built-in risky command checks.
+- Temporary fixture workspace runner with timeout and redaction.
+- JSON and Markdown report rendering.
+- Fixture-backed tests and smoke script.
