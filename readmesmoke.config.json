@@ -1,0 +1,7 @@
+{
+  "docs": ["examples/basic/README.md"],
+  "allow": ["^echo readmesmoke fixture$", "^node hello\\.js$"],
+  "fixtures": ["examples/basic/hello.js"],
+  "timeoutMs": 5000,
+  "redact": ["TOKEN", "SECRET", "PASSWORD", "API_KEY"]
+}
