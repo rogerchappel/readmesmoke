@@ -1,58 +1,19 @@
-# Security Policy
+# Security
 
-## Supported Versions
+`readmesmoke` executes maintainer-approved local commands. Please treat command execution behavior as security-sensitive.
 
-Replace this section with the supported versions for `readmesmoke`.
+## Reporting a vulnerability
 
-Example:
+Open a private security advisory on GitHub if available, or contact the maintainer through the repository issue tracker with a minimal, non-destructive reproduction.
 
-```md
-| Version | Supported |
-| --- | --- |
-| .x | Yes |
-| < .0 | No |
-```
+Useful reports include:
 
-If the project does not publish versioned releases yet, say that clearly.
-
-## Reporting a Vulnerability
-
-Please do not report suspected vulnerabilities in public issues, pull requests, or discussions.
-
-Ask maintainers for the private security reporting path before sharing details.
-
-If no private reporting path exists yet, ask maintainers through public project channels for a private reporting path. Do not include exploit details, secrets, personal data, or sensitive technical details in public messages.
-
-## What to Include
-
-When a private reporting path is available, include:
-
-- A clear description of the issue.
-- Affected versions, files, packages, workflows, or configuration.
-- Steps to reproduce, proof of concept, or attack scenario when safe to share.
-- Potential impact.
-- Suggested mitigation, if known.
-
-## Response Expectations
-
-Maintainers review good-faith reports as capacity allows.
-
-Do not imply paid support, guaranteed response times, guaranteed fixes, or service-level agreements unless `readmesmoke` explicitly provides them.
+- allowlist bypasses;
+- dangerous commands that are not denied;
+- secret redaction failures;
+- fixture workspace escapes;
+- CLI behavior that executes without explicit approval.
 
 ## Scope
 
-In scope:
-
-- Vulnerabilities in readmesmoke.
-- Insecure default configuration shipped by this project.
-- CI, release, or dependency guidance maintained by this project.
-
-Out of scope:
-
-- General support requests.
-- Requests for guaranteed maintenance timelines.
-- Issues in unrelated downstream projects.
-
-## Disclosure
-
-Coordinate disclosure with maintainers before publishing vulnerability details.
+This project does not claim to sandbox untrusted code. Running hostile docs still requires an external isolation boundary such as a disposable VM or container.
