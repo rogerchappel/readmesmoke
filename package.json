@@ -25,7 +25,7 @@
     "clean": "rm -rf dist coverage .tmp-smoke",
     "build": "tsc -p tsconfig.json",
     "check": "tsc -p tsconfig.json --noEmit",
-    "test": "node --test \"test/**/*.test.js\"",
+    "test": "npm run build && node --test \"test/**/*.test.js\"",
     "smoke": "npm run build && bash scripts/smoke.sh",
     "package:smoke": "npm pack --dry-run",
     "release:check": "npm test && npm run check && npm run build && npm run package:smoke"
