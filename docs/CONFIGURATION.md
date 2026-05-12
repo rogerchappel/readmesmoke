@@ -1,0 +1,25 @@
+# Configuration
+
+`readmesmoke.config.json` lives at the repository root by default.
+
+```json
+{
+  "docs": ["README.md", "docs/**/*.md"],
+  "allow": ["^npm test$", "^echo .+$"],
+  "fixtures": ["examples"],
+  "timeoutMs": 10000,
+  "env": { "NODE_ENV": "test" },
+  "redact": ["TOKEN", "SECRET", "PASSWORD", "API_KEY"]
+}
+```
+
+## Fields
+
+- `docs`: Markdown files or simple glob patterns to scan.
+- `allow`: regular expressions. A command must match one and avoid deny rules before it can run.
+- `fixtures`: files or directories copied into the temporary execution workspace.
+- `timeoutMs`: per-command timeout. Values below 100ms are raised to 100ms.
+- `env`: additional environment variables for child commands.
+- `redact`: environment key markers whose values should be hidden in output.
+
+Prefer narrow allow rules. `^npm test$` is safer and more auditable than `^npm .+$`.
