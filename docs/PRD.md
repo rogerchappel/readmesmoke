@@ -1,6 +1,6 @@
 # readmesmoke PRD
 
-Status: in-progress
+Status: MVP complete; local verification required before each release.
 
 ## Summary
 
