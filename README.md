@@ -60,6 +60,8 @@ bash demo/run-basic-readme-smoke.sh
 The script builds the CLI, executes the allowlisted snippets from
 `examples/basic`, and prints the JSON and Markdown report paths. See
 `docs/tutorials/fixture-backed-readme-smoke.md` for the full recipe.
+For a PR-oriented explanation of the same fixture, see
+`examples/fixture-project-review.md`.
 
 ## How commands are discovered
 
