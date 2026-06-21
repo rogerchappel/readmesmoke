@@ -1,5 +1,7 @@
 # readmesmoke
 
+CLI aliases: `readmesmoke` and `rsmoke` run the same checks, so the shorter alias works well in local smoke scripts.
+
 `readmesmoke` is a local-first TypeScript CLI that smoke-tests runnable commands in READMEs and docs. It extracts shell snippets, checks them against an explicit allowlist, runs approved commands in a temporary fixture workspace, and writes a crisp pass/fail report.
 
 It is intentionally boring about safety: dry-run first, default-deny execution, no telemetry, no cloud service, no secret collection.
