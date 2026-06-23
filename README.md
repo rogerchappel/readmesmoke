@@ -107,6 +107,11 @@ npm run release:check
 
 `release:readiness` validates repository metadata, the package files allowlist, package smoke coverage, and CI placeholder cleanup. `release:check` runs the project build, test, smoke, and package dry-run checks where configured.
 
+## Package contents
+
+`npm run package:smoke` verifies that the tarball includes the compiled CLI,
+examples, demo script, docs, and validation scripts referenced by this README.
+
 ## License
 
 MIT
