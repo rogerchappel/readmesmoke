@@ -18,6 +18,9 @@
   "files": [
     "dist",
     "examples",
+    "demo",
+    "docs",
+    "scripts",
     "README.md",
     "LICENSE",
     "SECURITY.md",
