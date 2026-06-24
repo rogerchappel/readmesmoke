@@ -51,6 +51,15 @@ Render a Markdown report later:
 readmesmoke report --input readmesmoke-report.json --markdown
 ```
 
+For a fixture-backed release-docs walkthrough, run:
+
+```sh
+bash demo/release-docs-check.sh
+```
+
+The demo writes a command plan, JSON execution report, and Markdown report under
+`/tmp/readmesmoke-demo` or `$TMPDIR/readmesmoke-demo`.
+
 ## Runnable demo
 
 Run the committed fixture-backed demo:
