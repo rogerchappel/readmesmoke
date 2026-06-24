@@ -1,7 +1,8 @@
 {
   "repo": "readmesmoke",
-  "owner": "oss-factory-20260512-evening",
-  "workspace": "/Users/roger/Developer/my-opensource/readmesmoke",
+  "owner": "oss-factory-20260520-am",
+  "workspace": "/Users/roger/Developer/my-opensource/_worktrees/20260520-am/readmesmoke",
+  "main_checkout": "/Users/roger/Developer/my-opensource/readmesmoke",
   "github": "rogerchappel/readmesmoke",
   "waves": ["baseline", "core-modules", "fixtures-tests", "cli-smoke-validation", "docs-metadata", "publish-protect"],
   "quality_bar": {"local_first": true, "fixture_tests": true, "real_cli_smoke": true, "atomic_commits_target": "30-50"}
