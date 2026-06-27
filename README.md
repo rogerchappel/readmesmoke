@@ -74,6 +74,15 @@ The script builds the CLI, executes the allowlisted snippets from
 For a PR-oriented explanation of the same fixture, see
 `examples/fixture-project-review.md`.
 
+To show the default-deny safety path with an intentionally unsafe fixture:
+
+```sh
+bash demo/unsafe-snippet-plan.sh
+```
+
+That demo plans `examples/unsafe/README.md` without executing anything and
+expects the privileged command to be denied.
+
 ## How commands are discovered
 
 `readmesmoke` captures:
