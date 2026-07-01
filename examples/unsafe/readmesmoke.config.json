@@ -1,0 +1,6 @@
+{
+  "docs": ["README.md"],
+  "allow": ["^sudo echo no$"],
+  "fixtures": [],
+  "timeoutMs": 5000
+}
