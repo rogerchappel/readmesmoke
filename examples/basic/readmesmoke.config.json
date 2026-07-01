@@ -1,5 +1,6 @@
 {
   "docs": ["README.md"],
   "allow": ["^echo readmesmoke fixture$", "^node hello\\.js$"],
+  "fixtures": ["hello.js"],
   "timeoutMs": 5000
 }
