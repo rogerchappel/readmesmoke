@@ -49,6 +49,18 @@ Render a Markdown report later:
 readmesmoke report --input readmesmoke-report.json --markdown
 ```
 
+## Local demo
+
+Run the included fixture walkthrough to build the CLI, execute the allowlisted
+README snippets, and render JSON plus Markdown reports:
+
+```sh
+bash demo/run-basic-fixture.sh
+```
+
+See [docs/promo/basic-fixture-demo.md](docs/promo/basic-fixture-demo.md) for
+the short demo script and promotion notes.
+
 ## How commands are discovered
 
 `readmesmoke` captures:
