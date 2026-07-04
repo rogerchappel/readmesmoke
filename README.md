@@ -51,6 +51,15 @@ Render a Markdown report later:
 readmesmoke report --input readmesmoke-report.json --markdown
 ```
 
+For a fixture-backed CI artifact walkthrough, run:
+
+```sh
+bash demo/ci-report-artifact.sh
+```
+
+See [docs/tutorials/ci-report-artifact.md](docs/tutorials/ci-report-artifact.md)
+for the plan, run, and Markdown report flow.
+
 ## Local demo
 
 Run the included fixture walkthrough to build the CLI, execute the allowlisted
