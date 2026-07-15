@@ -2,7 +2,7 @@
 
 ## Owner
 
-One isolated OpenClaw sub-agent owns this repository for the May 12 evening OSS Factory run.
+One isolated OpenClaw sub-agent owns this repository for the May 20 AM OSS Factory run.
 
 ## Waves
 
@@ -15,7 +15,8 @@ One isolated OpenClaw sub-agent owns this repository for the May 12 evening OSS 
 
 ## Boundaries
 
-- Work only inside `/Users/roger/Developer/my-opensource/readmesmoke` unless reading shared tools/docs.
+- Work only inside `/Users/roger/Developer/my-opensource/_worktrees/20260520-am/readmesmoke` unless reading shared tools/docs.
+- Do not edit the main checkout at `/Users/roger/Developer/my-opensource/readmesmoke`.
 - Do not use another project's repo/worktree.
 - Do not edit established main checkouts elsewhere.
 - Keep everything local-first; no telemetry or secret upload.

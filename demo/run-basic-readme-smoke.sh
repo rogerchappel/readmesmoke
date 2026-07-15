@@ -22,4 +22,5 @@ node dist/cli.js report --input .tmp/readmesmoke-demo/report.json --markdown > .
 node -e "const fs=require('node:fs'); const report=JSON.parse(fs.readFileSync('.tmp/readmesmoke-demo/report.json','utf8')); if (report.totals.passed !== 2 || report.totals.failed !== 0 || report.totals.denied !== 0) { console.error(report.totals); process.exit(1); }"
 grep -q "node hello.js" .tmp/readmesmoke-demo/report.md
 
-printf 'Wrote .tmp/readmesmoke-demo/report.json and report.md\n'
+printf 'JSON report: .tmp/readmesmoke-demo/report.json\n'
+printf 'Markdown report: .tmp/readmesmoke-demo/report.md\n'
