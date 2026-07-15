@@ -104,6 +104,15 @@ bash demo/unsafe-snippet-plan.sh
 That demo plans `examples/unsafe/README.md` without executing anything and
 expects the privileged command to be denied.
 
+To compare an allowlisted fixture and a denied fixture in one packet:
+
+```sh
+bash demo/safe-vs-denied-plans.sh
+```
+
+See [docs/tutorials/safe-vs-denied-plans.md](docs/tutorials/safe-vs-denied-plans.md)
+for the short safety-demo flow.
+
 ## How commands are discovered
 
 `readmesmoke` captures:
