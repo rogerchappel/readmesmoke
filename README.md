@@ -49,6 +49,16 @@ Render a Markdown report later:
 readmesmoke report --input readmesmoke-report.json --markdown
 ```
 
+For a fixture-backed demo using `examples/basic`, run:
+
+```sh
+bash demo/run-basic-readme-smoke.sh
+```
+
+The walkthrough is in
+[docs/tutorials/fixture-readme-smoke.md](docs/tutorials/fixture-readme-smoke.md),
+with promotion notes in [docs/promo/social-hooks.md](docs/promo/social-hooks.md).
+
 ## How commands are discovered
 
 `readmesmoke` captures:
