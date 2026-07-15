@@ -83,11 +83,15 @@ The demo writes a command plan, JSON execution report, and Markdown report under
 
 ## Runnable demo
 
-Run the committed fixture-backed demo:
+Run the committed fixture-backed demo using `examples/basic`:
 
 ```sh
 bash demo/run-basic-readme-smoke.sh
 ```
+
+The walkthrough is in
+[docs/tutorials/fixture-readme-smoke.md](docs/tutorials/fixture-readme-smoke.md),
+with promotion notes in [docs/promo/social-hooks.md](docs/promo/social-hooks.md).
 
 The script builds the CLI, executes the allowlisted snippets from
 `examples/basic`, and prints the JSON and Markdown report paths. See
