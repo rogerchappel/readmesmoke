@@ -54,11 +54,49 @@ export function parseMarkdown(markdown: string, file = '<memory>'): CommandSnipp
 }
 
 export function extractCommands(block: string): string[] {
-  return block
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .filter((line) => !line.startsWith('#'))
-    .map((line) => line.replace(/^[$>]\s*/, '').trim())
-    .filter((line) => !line.endsWith('\\'));
+  const commands: string[] = [];
+  let current: string[] = [];
+  let compoundDepth = 0;
+  let heredocDelimiter: string | undefined;
+
+  const flush = () => {
+    if (current.length > 0) commands.push(current.join('\n'));
+    current = [];
+  };
+
+  for (const physicalLine of block.split(/\r?\n/)) {
+    const line = physicalLine.trim().replace(/^[$>]\s*/, '');
+
+    if (heredocDelimiter) {
+      current.push(physicalLine);
+      if (line === heredocDelimiter) {
+        heredocDelimiter = undefined;
+        if (compoundDepth === 0) flush();
+      }
+      continue;
+    }
+
+    if (!line || (line.startsWith('#') && current.length === 0)) continue;
+    current.push(line);
+
+    const heredoc = line.match(/<<-?\s*(['"]?)([A-Za-z_][A-Za-z0-9_]*)\1/);
+    if (heredoc) heredocDelimiter = heredoc[2];
+
+    compoundDepth += compoundDelta(line);
+    if (!heredocDelimiter && compoundDepth === 0 && !line.endsWith('\\')) flush();
+  }
+
+  flush();
+  return commands;
+}
+
+function compoundDelta(line: string): number {
+  const code = line.replace(/#.*$/, '');
+  const opens = count(code, /\b(?:do|then|case)\b/g) + count(code, /(?:^|[;{]\s*)\{(?:\s|$)/g);
+  const closes = count(code, /\b(?:done|fi|esac)\b/g) + count(code, /(?:^|[;}]\s*)\}(?:\s*;?\s*$)/g);
+  return opens - closes;
+}
+
+function count(value: string, pattern: RegExp): number {
+  return [...value.matchAll(pattern)].length;
 }

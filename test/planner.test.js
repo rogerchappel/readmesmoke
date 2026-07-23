@@ -13,3 +13,15 @@ test('plan marks matching commands allowed and others denied', async () => {
   assert.equal(planned[0].allowed, true);
   assert.equal(planned[1].allowed, false);
 });
+
+test('plan allowlists a complete multiline command instead of its fragments', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'readmesmoke-plan-'));
+  await writeFile(join(root, 'README.md'), '```sh\nfor value in one two; do\n  echo "$value"\ndone\n```');
+  const planned = await plan(root, {
+    docs: ['README.md'],
+    allow: ['^for value in one two; do\\necho "\\$value"\\ndone$'],
+    timeoutMs: 1000
+  });
+  assert.equal(planned.length, 1);
+  assert.equal(planned[0].allowed, true);
+});
