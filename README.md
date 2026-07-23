@@ -125,6 +125,9 @@ for the short safety-demo flow.
 - any fenced block immediately preceded by `<!-- readmesmoke: run -->`.
 
 Prompts like `$ npm test` and `> echo hi` are normalized before planning.
+Independent lines are planned separately. Backslash continuations, compound shell
+constructs such as `for`/`do`/`done`, and heredocs are kept together and
+allowlisted and executed as one shell program.
 
 ## Safety model
 
