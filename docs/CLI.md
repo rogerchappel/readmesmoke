@@ -6,7 +6,8 @@ Builds a command plan and exits without running commands.
 
 Options:
 
-- `--config <path>`: config file relative to `--root`.
+- `--config <path>`: required, readable config file relative to `--root`. Without
+  this option, an absent default `readmesmoke.config.json` uses safe defaults.
 - `--json`, `--markdown`, or `--format <json|markdown>`: select one output format.
 - `--root <path>`: scan another repository root.
 
@@ -30,6 +31,10 @@ Options are command-specific. A missing option value, another option where a val
 is required, an option belonging to another command, or conflicting output format
 selections prints the usage summary and exits with status 2 before scanning or
 executing anything.
+
+An explicitly selected config that is absent or unreadable likewise prints a
+config diagnostic and usage, exits with status 2, and does not plan or execute
+README commands.
 
 ## Exit codes
 

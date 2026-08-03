@@ -1,4 +1,4 @@
-import { access, readFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import type { ReadmeSmokeConfig } from './types.js';
 
@@ -15,28 +15,51 @@ export function defaultConfig(): ReadmeSmokeConfig {
   return structuredClone(DEFAULT_CONFIG);
 }
 
-export async function loadConfig(root = process.cwd(), configPath = 'readmesmoke.config.json'): Promise<ReadmeSmokeConfig> {
-  const fullPath = resolve(root, configPath);
+export class ConfigError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ConfigError';
+  }
+}
+
+export async function loadConfig(root = process.cwd(), configPath?: string): Promise<ReadmeSmokeConfig> {
+  const implicitDefault = configPath === undefined;
+  const selectedPath = configPath ?? 'readmesmoke.config.json';
+  const fullPath = resolve(root, selectedPath);
+  let contents: string;
   try {
-    await access(fullPath);
-  } catch {
-    return defaultConfig();
+    contents = await readFile(fullPath, 'utf8');
+  } catch (error) {
+    if (implicitDefault && isNodeError(error) && error.code === 'ENOENT') return defaultConfig();
+    throw new ConfigError(`cannot read config ${selectedPath}: ${errorMessage(error)}`);
   }
 
-  const parsed = JSON.parse(await readFile(fullPath, 'utf8')) as Partial<ReadmeSmokeConfig>;
+  const parsed = JSON.parse(contents) as Partial<ReadmeSmokeConfig>;
   return normalizeConfig({ ...defaultConfig(), ...parsed });
 }
 
 export function normalizeConfig(config: ReadmeSmokeConfig): ReadmeSmokeConfig {
+  const timeoutMs = Number(config.timeoutMs ?? 10_000);
+  if (!Number.isFinite(timeoutMs)) {
+    throw new ConfigError('config.timeoutMs must be a finite number');
+  }
   return {
     ...config,
     docs: nonEmptyArray(config.docs, 'docs'),
     allow: nonEmptyArray(config.allow, 'allow'),
-    timeoutMs: Math.max(100, Number(config.timeoutMs ?? 10_000)),
+    timeoutMs: Math.max(100, timeoutMs),
     fixtures: config.fixtures ?? [],
     env: config.env ?? {},
     redact: config.redact ?? defaultConfig().redact
   };
+}
+
+function isNodeError(error: unknown): error is NodeJS.ErrnoException {
+  return error instanceof Error && 'code' in error;
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }
 
 function nonEmptyArray(value: unknown, name: string): string[] {

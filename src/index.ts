@@ -1,4 +1,4 @@
-export { defaultConfig, loadConfig, normalizeConfig } from './config.js';
+export { ConfigError, defaultConfig, loadConfig, normalizeConfig } from './config.js';
 export { expandGlobs, globToRegExp } from './globs.js';
 export { parseMarkdown, parseMarkdownFile, extractCommands } from './parser.js';
 export { inspectRisk, isDenied } from './risk.js';
