@@ -1,6 +1,8 @@
 # Configuration
 
-`readmesmoke.config.json` lives at the repository root by default.
+`readmesmoke.config.json` lives at the repository root by default. If that
+implicit default file is absent, readmesmoke uses its safe defaults. A path
+supplied with `--config` is required and must be readable.
 
 ```json
 {
@@ -18,7 +20,8 @@
 - `docs`: Markdown files or simple glob patterns to scan.
 - `allow`: regular expressions. A command must match one and avoid deny rules before it can run.
 - `fixtures`: files or directories copied into the temporary execution workspace.
-- `timeoutMs`: per-command timeout. Values below 100ms are raised to 100ms.
+- `timeoutMs`: finite numeric per-command timeout. Values below 100ms are raised
+  to 100ms; non-numeric, `NaN`, and infinite values are rejected.
 - `env`: additional environment variables for child commands.
 - `redact`: environment key markers whose values should be hidden in output.
 
