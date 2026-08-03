@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { buildReport, loadConfig, plan, renderReport, runPlan } from './index.js';
+import { buildReport, ConfigError, loadConfig, plan, renderReport, runPlan } from './index.js';
 import type { ReportFormat, SmokeReport } from './types.js';
 import { toErrorMessage } from './errors.js';
 
@@ -104,6 +104,6 @@ main(process.argv.slice(2)).then((code) => {
   process.exitCode = code;
 }).catch((error: unknown) => {
   process.stderr.write(`readmesmoke: ${toErrorMessage(error)}\n`);
-  if (error instanceof CliUsageError) usage(process.stderr);
-  process.exitCode = error instanceof CliUsageError ? 2 : 1;
+  if (error instanceof CliUsageError || error instanceof ConfigError) usage(process.stderr);
+  process.exitCode = error instanceof CliUsageError || error instanceof ConfigError ? 2 : 1;
 });

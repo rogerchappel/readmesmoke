@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -61,6 +61,36 @@ test('invalid usage does not plan or execute README commands', async () => {
   const result = invoke(['run', '--execute', '--root', root, '--config'], root);
   assert.equal(result.status, 2);
   await assert.rejects(readFile(join(root, 'marker.txt')), { code: 'ENOENT' });
+});
+
+test('an absent explicit config fails before planning or execution', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'readmesmoke-cli-'));
+  await writeFile(join(root, 'README.md'), '```sh\nprintf executed > marker.txt\n```\n');
+
+  const result = invoke(['run', '--execute', '--root', root, '--config', 'missing.json'], root);
+  assert.equal(result.status, 2);
+  assert.match(result.stderr, /cannot read config missing\.json/);
+  assert.match(result.stderr, /Usage:/);
+  await assert.rejects(readFile(join(root, 'marker.txt')), { code: 'ENOENT' });
+});
+
+test('an unreadable explicit config fails with a config diagnostic', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'readmesmoke-cli-'));
+  await mkdir(join(root, 'config.json'));
+
+  const result = invoke(['scan', '--root', root, '--config', 'config.json'], root);
+  assert.equal(result.status, 2);
+  assert.match(result.stderr, /cannot read config config\.json/);
+  assert.match(result.stderr, /Usage:/);
+});
+
+test('an absent implicit default config continues with safe defaults', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'readmesmoke-cli-'));
+  await writeFile(join(root, 'README.md'), '```sh\necho safe-default\n```\n');
+
+  const result = invoke(['scan', '--root', root, '--json'], root);
+  assert.equal(result.status, 0);
+  assert.equal(JSON.parse(result.stdout).totals.planned, 1);
 });
 
 test('report exits unsuccessfully for failed and denied saved reports', async () => {
