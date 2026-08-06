@@ -37,6 +37,8 @@ jobs:
           npm --prefix /tmp/releasebox run build
       - name: ReleaseBox readiness check
         run: node /tmp/releasebox/bin/releasebox.js check .
+      - name: Validate distribution contract
+        run: npm run release:readiness
       - name: Run release checks
         run: npm run release:check
       - name: Release notes preview
