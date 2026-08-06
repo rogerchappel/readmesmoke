@@ -30,6 +30,7 @@
   "scripts": {
     "clean": "rm -rf dist coverage .tmp-smoke",
     "build": "tsc -p tsconfig.json",
+    "prepare": "npm run build",
     "check": "tsc -p tsconfig.json --noEmit",
     "test": "npm run build && node --test \"test/**/*.test.js\"",
     "smoke": "npm run build && bash scripts/smoke.sh",

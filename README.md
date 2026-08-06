@@ -9,8 +9,11 @@ It is intentionally boring about safety: dry-run first, default-deny execution, 
 ## Install
 
 ```sh
-npm install --save-dev readmesmoke
+npm install --save-dev github:rogerchappel/readmesmoke
 ```
+
+The package is distributed from GitHub. Git installs build the CLI locally, and
+tagged releases also attach an npm-compatible tarball to the GitHub release.
 
 Or run this repo locally:
 
