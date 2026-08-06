@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: write
-  id-token: write
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -24,7 +23,6 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          registry-url: https://registry.npmjs.org
       - name: Install dependencies
         run: npm ci
       - name: Install ReleaseBox
@@ -35,6 +33,8 @@ jobs:
           npm --prefix /tmp/releasebox run build
       - name: ReleaseBox readiness check
         run: node /tmp/releasebox/bin/releasebox.js check .
+      - name: Validate distribution contract
+        run: npm run release:readiness
       - name: Run release checks
         run: npm run release:check
       - name: Build package
