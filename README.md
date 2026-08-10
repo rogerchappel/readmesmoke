@@ -124,8 +124,11 @@ for the short safety-demo flow.
 
 `readmesmoke` captures:
 
-- fenced `bash`, `sh`, `shell`, `zsh`, and `console` blocks;
+- CommonMark backtick or tilde fenced `bash`, `sh`, `shell`, `zsh`, and `console` blocks;
 - any fenced block immediately preceded by `<!-- readmesmoke: run -->`.
+
+Fence closers must use the same character as the opener and be at least as long,
+so longer fences can safely contain shorter runs of backticks or tildes.
 
 Prompts like `$ npm test` and `> echo hi` are normalized before planning.
 Independent lines are planned separately. Backslash continuations, compound shell
