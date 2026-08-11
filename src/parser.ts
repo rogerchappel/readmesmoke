@@ -22,14 +22,18 @@ export function parseMarkdown(markdown: string, file = '<memory>'): CommandSnipp
       continue;
     }
 
-    const fence = line.match(/^```(\S*)/);
+    const fence = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
     if (!fence) continue;
 
-    const language = (fence[1] || '').toLowerCase();
+    const delimiter = fence[1];
+    const info = fence[2].trim();
+    if (delimiter[0] === '`' && info.includes('`')) continue;
+
+    const language = (info.split(/\s+/, 1)[0] || '').toLowerCase();
     const start = index + 1;
     const body: string[] = [];
     index += 1;
-    while (index < lines.length && !lines[index].startsWith('```')) {
+    while (index < lines.length && !isClosingFence(lines[index], delimiter)) {
       body.push(lines[index]);
       index += 1;
     }
@@ -51,6 +55,11 @@ export function parseMarkdown(markdown: string, file = '<memory>'): CommandSnipp
   }
 
   return snippets;
+}
+
+function isClosingFence(line: string, opener: string): boolean {
+  const fence = line.match(/^ {0,3}(`+|~+)[ \t]*$/);
+  return Boolean(fence && fence[1][0] === opener[0] && fence[1].length >= opener.length);
 }
 
 export function extractCommands(block: string): string[] {

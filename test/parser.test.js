@@ -27,6 +27,31 @@ test('parseMarkdown captures shell fences', () => {
   assert.equal(snippets[0].reason, 'fenced-block');
 });
 
+test('parseMarkdown captures tilde shell fences', () => {
+  const snippets = parseMarkdown('~~~bash\necho tilde\n~~~', 'README.md');
+  assert.equal(snippets.length, 1);
+  assert.equal(snippets[0].command, 'echo tilde');
+  assert.equal(snippets[0].language, 'bash');
+});
+
+test('parseMarkdown requires a matching fence at least as long as the opener', () => {
+  const markdown = '````bash\necho before\n```\necho after\n````';
+  const snippets = parseMarkdown(markdown, 'README.md');
+  assert.deepEqual(snippets.map(({ command }) => command), ['echo before', '```', 'echo after']);
+});
+
+test('parseMarkdown does not close a tilde fence with backticks', () => {
+  const markdown = '~~~sh\necho before\n```\necho after\n~~~';
+  const snippets = parseMarkdown(markdown, 'README.md');
+  assert.deepEqual(snippets.map(({ command }) => command), ['echo before', '```', 'echo after']);
+});
+
+test('parseMarkdown normalizes the first info string word as the language', () => {
+  const snippets = parseMarkdown('```  BaSh runnable-example\nnpm test\n```', 'README.md');
+  assert.equal(snippets.length, 1);
+  assert.equal(snippets[0].language, 'bash');
+});
+
 test('parseMarkdown emits one snippet for a multiline shell program', () => {
   const snippets = parseMarkdown('```sh\nfor value in one two; do\n  echo "$value"\ndone\n```', 'README.md');
   assert.equal(snippets.length, 1);
