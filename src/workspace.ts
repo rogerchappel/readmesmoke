@@ -1,6 +1,6 @@
-import { cp, mkdtemp, rm } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { basename, join, resolve } from 'node:path';
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import type { ReadmeSmokeConfig } from './types.js';
 import { pathExists } from './globs.js';
 
@@ -10,11 +10,20 @@ export interface PreparedWorkspace {
 }
 
 export async function prepareWorkspace(root: string, config: ReadmeSmokeConfig): Promise<PreparedWorkspace> {
-  const workspace = await mkdtemp(join(tmpdir(), 'readmesmoke-'));
-  for (const fixture of config.fixtures ?? []) {
+  const fixtures = (config.fixtures ?? []).map((fixture) => {
     const source = resolve(root, fixture);
+    const destinationPath = relative(root, source);
+    if (!destinationPath || destinationPath.startsWith(`..${sep}`) || isAbsolute(destinationPath)) {
+      throw new Error(`fixture must resolve inside the project root: ${fixture}`);
+    }
+    return { source, destinationPath };
+  });
+  const workspace = await mkdtemp(join(tmpdir(), 'readmesmoke-'));
+  for (const { source, destinationPath } of fixtures) {
     if (await pathExists(source)) {
-      await cp(source, join(workspace, basename(fixture)), { recursive: true });
+      const destination = join(workspace, destinationPath);
+      await mkdir(dirname(destination), { recursive: true });
+      await cp(source, destination, { recursive: true });
     }
   }
   return {
