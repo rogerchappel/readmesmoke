@@ -19,7 +19,9 @@ supplied with `--config` is required and must be readable.
 
 - `docs`: Markdown files or simple glob patterns to scan.
 - `allow`: regular expressions. A command must match one and avoid deny rules before it can run.
-- `fixtures`: files or directories copied into the temporary execution workspace.
+- `fixtures`: project-relative files or directories copied into the temporary
+  execution workspace at the same relative paths. This preserves distinct
+  same-named fixtures from different directories.
 - `timeoutMs`: finite numeric per-command timeout. Values below 100ms are raised
   to 100ms; non-numeric, `NaN`, and infinite values are rejected.
 - `env`: additional environment variables for child commands.
