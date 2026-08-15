@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { CommandSnippet } from './types.js';
 
-const RUN_HINT = /<!--\s*readmesmoke:\s*run\s*-->/i;
+const RUN_HINT = /^\s*<!--\s*readmesmoke:\s*run\s*-->\s*$/i;
 const SHELL_LANGUAGES = new Set(['bash', 'sh', 'shell', 'zsh', 'console']);
 
 export async function parseMarkdownFile(root: string, file: string): Promise<CommandSnippet[]> {
@@ -23,11 +23,17 @@ export function parseMarkdown(markdown: string, file = '<memory>'): CommandSnipp
     }
 
     const fence = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
-    if (!fence) continue;
+    if (!fence) {
+      hinted = false;
+      continue;
+    }
 
     const delimiter = fence[1];
     const info = fence[2].trim();
-    if (delimiter[0] === '`' && info.includes('`')) continue;
+    if (delimiter[0] === '`' && info.includes('`')) {
+      hinted = false;
+      continue;
+    }
 
     const language = (info.split(/\s+/, 1)[0] || '').toLowerCase();
     const start = index + 1;
