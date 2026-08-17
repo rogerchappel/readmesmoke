@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { runPlan } from '../dist/index.js';
+import { plan, runPlan } from '../dist/index.js';
 
 const command = {
   id: 'x',
@@ -27,6 +27,25 @@ test('runPlan executes allowed commands', async () => {
   const [result] = await runPlan(process.cwd(), { docs: ['README.md'], allow: ['^echo'], timeoutMs: 1000 }, [command], true);
   assert.equal(result.status, 'passed');
   assert.match(result.stdout, /runner-ok/);
+});
+
+test('runPlan executes a nested README command beside its fixture', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'readmesmoke-runner-'));
+  await mkdir(join(root, 'examples/basic'), { recursive: true });
+  await writeFile(join(root, 'examples/basic/README.md'), '```bash\nnode hello.js\n```\n');
+  await writeFile(join(root, 'examples/basic/hello.js'), 'console.log("nested-ok")\n');
+  const config = {
+    docs: ['examples/basic/README.md'],
+    allow: ['^node hello\\.js$'],
+    fixtures: ['examples/basic/hello.js'],
+    timeoutMs: 1000
+  };
+
+  const commands = await plan(root, config);
+  const [result] = await runPlan(root, config, commands, true);
+
+  assert.equal(result.status, 'passed');
+  assert.equal(result.stdout, 'nested-ok\n');
 });
 
 test('runPlan executes a compound command as one shell program', async () => {
