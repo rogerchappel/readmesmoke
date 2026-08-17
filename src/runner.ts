@@ -1,5 +1,6 @@
 import { spawn } from 'node:child_process';
 import { performance } from 'node:perf_hooks';
+import { dirname, join } from 'node:path';
 import { redactText } from './redact.js';
 import { prepareWorkspace } from './workspace.js';
 import type { CommandResult, PlannedCommand, ReadmeSmokeConfig } from './types.js';
@@ -13,7 +14,7 @@ export async function runPlan(root: string, config: ReadmeSmokeConfig, commands:
         results.push(skipped(command, execute ? 'command is not allowlisted' : 'dry-run'));
         continue;
       }
-      results.push(await runCommand(command, workspace.path, config));
+      results.push(await runCommand(command, join(workspace.path, dirname(command.file)), config));
     }
     return results;
   } finally {
