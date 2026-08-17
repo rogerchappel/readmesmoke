@@ -125,7 +125,9 @@ for the short safety-demo flow.
 `readmesmoke` captures:
 
 - CommonMark backtick or tilde fenced `bash`, `sh`, `shell`, `zsh`, and `console` blocks;
-- any fenced block immediately preceded by `<!-- readmesmoke: run -->`.
+- any fenced block immediately preceded on the prior line by
+  `<!-- readmesmoke: run -->`. Blank lines or prose between the hint and fence
+  break adjacency.
 
 Fence closers must use the same character as the opener and be at least as long,
 so longer fences can safely contain shorter runs of backticks or tildes.
@@ -141,6 +143,8 @@ allowlisted and executed as one shell program.
 - Built-in risk checks deny obvious foot-guns like `sudo`, `rm -rf /`, SSH/SCP, raw disk writes, and curl-to-shell pipelines.
 - Every command has a timeout.
 - Execution happens in a temporary directory populated only with configured fixtures.
+  Fixture paths are preserved relative to the project root, so same-named files
+  or directories at different paths remain distinct.
 - Output redacts common secret-like values.
 
 This is not a container sandbox. Treat it as a maintainer-friendly README smoke tester, not an untrusted-code isolation boundary.

@@ -63,3 +63,19 @@ test('parseMarkdown captures explicit run hints on non-shell fences', () => {
   assert.equal(snippets[0].command, 'echo hinted');
   assert.equal(snippets[0].reason, 'readmesmoke-hint');
 });
+
+test('parseMarkdown permits whitespace around a run hint on the adjacent line', () => {
+  const snippets = parseMarkdown('  <!-- readmesmoke: run -->  \n```text\necho hinted\n```', 'README.md');
+  assert.equal(snippets[0].command, 'echo hinted');
+  assert.equal(snippets[0].reason, 'readmesmoke-hint');
+});
+
+test('parseMarkdown requires run hints to be on the immediately preceding line', () => {
+  for (const intervening of ['\n', '\nThis prose breaks adjacency.\n', ' prose after the hint']) {
+    const snippets = parseMarkdown(
+      `<!-- readmesmoke: run -->${intervening}\n\`\`\`text\necho not-selected\n\`\`\``,
+      'README.md'
+    );
+    assert.deepEqual(snippets, []);
+  }
+});
