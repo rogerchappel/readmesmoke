@@ -174,8 +174,11 @@ npm run release:check
 
 ## Package contents
 
-`npm run package:smoke` verifies that the tarball includes the compiled CLI,
-examples, demo script, docs, and validation scripts referenced by this README.
+`npm run package:smoke` builds the project, parses `npm pack --dry-run --json`,
+and fails unless the tarball contains every declared `bin`, `main`, `types`, and
+`exports` target. It also checks representative README-promised package assets:
+the README itself, the basic example, its runnable demo and tutorial, and both
+release-validation scripts.
 
 ## License
 
