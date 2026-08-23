@@ -1,0 +1,19 @@
+{
+  "packageJson": {
+    "bin": { "readmesmoke": "./dist/cli.js" },
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } }
+  },
+  "validFiles": [
+    "dist/cli.js",
+    "dist/index.js",
+    "dist/index.d.ts",
+    "README.md",
+    "examples/basic/README.md",
+    "demo/run-basic-readme-smoke.sh",
+    "docs/tutorials/fixture-readme-smoke.md",
+    "scripts/validate.sh",
+    "scripts/validate-release-readiness.mjs"
+  ]
+}
