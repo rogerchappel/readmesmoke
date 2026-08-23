@@ -34,7 +34,7 @@
     "check": "tsc -p tsconfig.json --noEmit",
     "test": "npm run build && node --test \"test/**/*.test.js\"",
     "smoke": "npm run build && bash scripts/smoke.sh",
-    "package:smoke": "npm pack --dry-run",
+    "package:smoke": "npm run build && node scripts/verify-package-contents.mjs",
     "release:check": "npm test && npm run check && npm run build && npm run smoke && npm run package:smoke",
     "release:readiness": "node scripts/validate-release-readiness.mjs"
   },
