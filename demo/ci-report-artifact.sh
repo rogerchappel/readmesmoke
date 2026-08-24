@@ -14,11 +14,13 @@ node dist/cli.js scan --root examples/ci-report --config readmesmoke.config.json
 scan_status=$?
 node dist/cli.js run --root examples/ci-report --config readmesmoke.config.json --execute --json > "$OUT_DIR/run.json"
 run_status=$?
+node dist/cli.js report --input "$OUT_DIR/run.json" --markdown > "$OUT_DIR/report.md"
+report_status=$?
 set -e
 
 test "$scan_status" -eq 2
 test "$run_status" -eq 1
-node dist/cli.js report --input "$OUT_DIR/run.json" --markdown > "$OUT_DIR/report.md"
+test "$report_status" -eq 1
 
 grep -q "docs are runnable" "$OUT_DIR/run.json"
 grep -q "npm publish" "$OUT_DIR/plan.json"

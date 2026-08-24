@@ -26,6 +26,10 @@ echo docs are runnable
 
 That makes the demo useful for explaining both sides of the tool: discover the
 full command surface, then execute only what a maintainer has approved.
+The scan exits `2` because it finds a denied command, and both the run and
+report exit `1` because their saved result includes that denial. The demo
+captures and verifies those expected statuses so the recipe itself exits `0`
+after writing and checking all three artifacts.
 
 ## CI sketch
 
