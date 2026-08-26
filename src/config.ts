@@ -34,19 +34,34 @@ export async function loadConfig(root = process.cwd(), configPath?: string): Pro
     throw new ConfigError(`cannot read config ${selectedPath}: ${errorMessage(error)}`);
   }
 
-  const parsed = JSON.parse(contents) as Partial<ReadmeSmokeConfig>;
-  return normalizeConfig({ ...defaultConfig(), ...parsed });
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(contents);
+  } catch (error) {
+    throw new ConfigError(`cannot parse config ${selectedPath}: ${errorMessage(error)}`);
+  }
+  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+    throw new ConfigError(`config ${selectedPath} must contain a JSON object`);
+  }
+  return normalizeConfig({ ...defaultConfig(), ...(parsed as Partial<ReadmeSmokeConfig>) });
 }
-
 export function normalizeConfig(config: ReadmeSmokeConfig): ReadmeSmokeConfig {
   const timeoutMs = Number(config.timeoutMs ?? 10_000);
   if (!Number.isFinite(timeoutMs)) {
     throw new ConfigError('config.timeoutMs must be a finite number');
   }
+  const allow = nonEmptyArray(config.allow, 'allow');
+  for (const pattern of allow) {
+    try {
+      new RegExp(pattern);
+    } catch (error) {
+      throw new ConfigError(`config.allow contains an invalid regular expression: ${pattern} (${errorMessage(error)})`);
+    }
+  }
   return {
     ...config,
     docs: nonEmptyArray(config.docs, 'docs'),
-    allow: nonEmptyArray(config.allow, 'allow'),
+    allow,
     timeoutMs: Math.max(100, timeoutMs),
     fixtures: config.fixtures ?? [],
     env: config.env ?? {},
@@ -64,7 +79,7 @@ function errorMessage(error: unknown): string {
 
 function nonEmptyArray(value: unknown, name: string): string[] {
   if (!Array.isArray(value) || value.length === 0 || value.some((item) => typeof item !== 'string')) {
-    throw new Error(`config.${name} must be a non-empty string array`);
+    throw new ConfigError(`config.${name} must be a non-empty string array`);
   }
   return value;
 }
