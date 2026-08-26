@@ -84,6 +84,24 @@ test('an unreadable explicit config fails with a config diagnostic', async () =>
   assert.match(result.stderr, /Usage:/);
 });
 
+test('a malformed allow pattern fails with a config diagnostic and usage', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'readmesmoke-cli-'));
+  await writeFile(join(root, 'README.md'), '```sh\nprintf planned > marker.txt\n```\n');
+  await writeFile(join(root, '.readmesmoke.json'), JSON.stringify({
+    docs: ['README.md'],
+    allow: ['(unclosed'],
+    timeoutMs: 1000
+  }));
+
+  for (const command of ['scan', 'run']) {
+    const result = invoke(command === 'scan' ? ['scan', '--root', root, '--config', '.readmesmoke.json'] : ['run', '--execute', '--root', root, '--config', '.readmesmoke.json'], root);
+    assert.equal(result.status, 2, command);
+    assert.match(result.stderr, /config\.allow contains an invalid regular expression/, command);
+    assert.match(result.stderr, /Usage:/, command);
+  }
+  await assert.rejects(readFile(join(root, 'marker.txt')), { code: 'ENOENT' });
+});
+
 test('an absent implicit default config continues with safe defaults', async () => {
   const root = await mkdtemp(join(tmpdir(), 'readmesmoke-cli-'));
   await writeFile(join(root, 'README.md'), '```sh\necho safe-default\n```\n');
