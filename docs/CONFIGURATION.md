@@ -19,6 +19,8 @@ supplied with `--config` is required and must be readable.
 
 - `docs`: Markdown files or simple glob patterns to scan.
 - `allow`: regular expressions. A command must match one and avoid deny rules before it can run.
+  Each pattern is compiled when the config is loaded, so an invalid regular expression fails
+  with a config error before anything is planned or executed.
 - `fixtures`: project-relative files or directories copied into the temporary
   execution workspace at the same relative paths. This preserves distinct
   same-named fixtures from different directories. Each command runs from the
@@ -26,7 +28,9 @@ supplied with `--config` is required and must be readable.
   nested README can refer to a sibling fixture with a relative command such as
   `node hello.js`.
 - `timeoutMs`: finite numeric per-command timeout. Values below 100ms are raised
-  to 100ms; non-numeric, `NaN`, and infinite values are rejected.
+  to 100ms; non-numeric, `NaN`, and infinite values are rejected. The timeout is a
+  hard bound: an expired command (including any background children it started) is
+  terminated and reported as failed.
 - `env`: additional environment variables for child commands.
 - `redact`: environment key markers whose values should be hidden in output.
 
