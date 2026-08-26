@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { plan, runPlan } from '../dist/index.js';
+import { plan, runCommand, runPlan } from '../dist/index.js';
 
 const command = {
   id: 'x',
@@ -125,4 +125,30 @@ test('runPlan preserves configured file paths with the same filename', async () 
 
   assert.equal(result.status, 'passed');
   assert.equal(result.stdout, '{"source":"a"}{"source":"b"}');
+});
+
+test('runCommand enforces timeoutMs on long-running foreground commands', async () => {
+  const started = Date.now();
+  const result = await runCommand(
+    { ...command, command: 'sleep 30' },
+    process.cwd(),
+    { docs: ['README.md'], allow: ['^sleep'], timeoutMs: 300, fixtures: [], env: {}, redact: [] }
+  );
+  const duration = Date.now() - started;
+  assert.equal(result.status, 'failed');
+  assert.equal(result.error, 'terminated by timeout');
+  assert.ok(duration < 5000, `expected resolution within ~timeoutMs, took ${duration}ms`);
+});
+
+test('runCommand timeout terminates background children', async () => {
+  const started = Date.now();
+  const result = await runCommand(
+    { ...command, command: 'sleep 30 &' },
+    process.cwd(),
+    { docs: ['README.md'], allow: ['^sleep'], timeoutMs: 300, fixtures: [], env: {}, redact: [] }
+  );
+  const duration = Date.now() - started;
+  assert.equal(result.status, 'failed');
+  assert.equal(result.error, 'terminated by timeout');
+  assert.ok(duration < 5000, `expected resolution within ~timeoutMs, took ${duration}ms`);
 });
