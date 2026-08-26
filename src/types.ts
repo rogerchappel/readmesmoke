@@ -6,7 +6,6 @@ export interface ReadmeSmokeConfig {
   env?: Record<string, string>;
   fixtures?: string[];
   timeoutMs: number;
-  workdir?: string;
   redact?: string[];
 }
 
