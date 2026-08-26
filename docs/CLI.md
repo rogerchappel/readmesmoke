@@ -34,7 +34,9 @@ executing anything.
 
 An explicitly selected config that is absent or unreadable likewise prints a
 config diagnostic and usage, exits with status 2, and does not plan or execute
-README commands.
+README commands. The same contract applies to a config file that is malformed
+(invalid JSON or not a JSON object) or that contains an invalid field, such as
+an unparseable `allow` regular expression or a non-string array field.
 
 ## Exit codes
 
