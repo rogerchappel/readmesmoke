@@ -33,20 +33,36 @@ export function runCommand(command: PlannedCommand, cwd: string, config: ReadmeS
       cwd,
       env: { ...process.env, ...config.env },
       shell: true,
-      stdio: ['ignore', 'pipe', 'pipe']
+      stdio: ['ignore', 'pipe', 'pipe'],
+      detached: true
     });
     let stdout = '';
     let stderr = '';
-    const timer = setTimeout(() => child.kill('SIGTERM'), config.timeoutMs);
+    let timedOut = false;
+    let graceTimer: NodeJS.Timeout | undefined;
+    const terminate = (signal: NodeJS.Signals): void => {
+      if (child.pid === undefined) return;
+      try {
+        process.kill(-child.pid, signal);
+      } catch {
+        // Process group already exited.
+      }
+    };
+    const timer = setTimeout(() => {
+      timedOut = true;
+      terminate('SIGTERM');
+      graceTimer = setTimeout(() => terminate('SIGKILL'), 1000);
+    }, config.timeoutMs);
     child.stdout.on('data', (chunk) => { stdout += String(chunk); });
     child.stderr.on('data', (chunk) => { stderr += String(chunk); });
     child.on('close', (exitCode, signal) => {
       clearTimeout(timer);
+      clearTimeout(graceTimer);
       const durationMs = Math.round(performance.now() - started);
-      const error = signal ? `terminated by ${signal}` : undefined;
+      const error = timedOut ? 'terminated by timeout' : signal ? `terminated by ${signal}` : undefined;
       resolve({
         ...command,
-        status: exitCode === 0 && !signal ? 'passed' : 'failed',
+        status: timedOut || exitCode !== 0 || signal ? 'failed' : 'passed',
         exitCode,
         durationMs,
         stdout: redactText(stdout, config.env, config.redact),
@@ -56,6 +72,7 @@ export function runCommand(command: PlannedCommand, cwd: string, config: ReadmeS
     });
     child.on('error', (error) => {
       clearTimeout(timer);
+      clearTimeout(graceTimer);
       resolve({ ...command, status: 'failed', exitCode: null, durationMs: Math.round(performance.now() - started), stdout, stderr, error: error.message });
     });
   });
