@@ -1,8 +1,8 @@
 import type { RiskFinding } from './types.js';
 
 const DENY_PATTERNS: Array<[RegExp, string]> = [
-  [/\brm\s+-rf\s+(?:\/|~|\$HOME)/, 'refuses destructive recursive removal'],
-  [/[;&|]\s*(?:curl|wget)\b.*\|\s*(?:sh|bash|zsh)\b/, 'refuses network-to-shell pipelines'],
+  [/\brm\s+-rf\s+(?:\/|~|\$HOME)(?=\s|[;&|)]|$)/, 'refuses destructive recursive removal'],
+  [/\b(?:curl|wget)\b[\s\S]*\|\s*(?:bash|zsh|sh)\b/, 'refuses network-to-shell pipelines'],
   [/\bsudo\b/, 'refuses privileged commands'],
   [/\b(?:scp|rsync|ssh)\b/, 'refuses remote shell/file commands'],
   [/>\s*\/dev\/(?:disk|rdisk)/, 'refuses raw device writes']
