@@ -21,7 +21,7 @@ supplied with `--config` is required and must be readable.
 - `allow`: regular expressions. A command must match one and avoid deny rules before it can run.
   Each pattern is compiled when the config is loaded, so an invalid regular expression fails
   with a config error before anything is planned or executed.
-- `fixtures`: project-relative files or directories copied into the temporary
+- `fixtures`: a string array of project-relative files or directories copied into the temporary
   execution workspace at the same relative paths. This preserves distinct
   same-named fixtures from different directories. Each command runs from the
   copied path corresponding to its source Markdown file's directory, so a
@@ -31,7 +31,12 @@ supplied with `--config` is required and must be readable.
   to 100ms; non-numeric, `NaN`, and infinite values are rejected. The timeout is a
   hard bound: an expired command (including any background children it started) is
   terminated and reported as failed.
-- `env`: additional environment variables for child commands.
-- `redact`: environment key markers whose values should be hidden in output.
+- `env`: a string-to-string object of additional environment variables for child commands.
+- `redact`: a string array of environment key markers whose values should be hidden in output.
+
+`fixtures`, `env`, and `redact` are optional and retain their documented defaults
+when omitted. Wrong container types or non-string members and values are rejected
+as config errors before commands are planned or executed. The CLI reports the
+diagnostic and usage, then exits with status 2.
 
 Prefer narrow allow rules. `^npm test$` is safer and more auditable than `^npm .+$`.
