@@ -49,6 +49,34 @@ test('normalizeConfig reports malformed array fields as ConfigError', () => {
   }
 });
 
+test('normalizeConfig rejects malformed optional fields as ConfigError', () => {
+  const base = { docs: ['README.md'], allow: ['^echo'], timeoutMs: 1000 };
+  for (const [field, values] of Object.entries({
+    fixtures: ['examples', [42]],
+    redact: ['TOKEN', [null]],
+    env: [[], { NODE_ENV: 42 }]
+  })) {
+    for (const value of values) {
+      assert.throws(
+        () => normalizeConfig({ ...base, [field]: value }),
+        (error) => error instanceof ConfigError && new RegExp(`config\\.${field}`).test(error.message)
+      );
+    }
+  }
+});
+
+test('normalizeConfig preserves valid optional fields and their defaults', () => {
+  const base = { docs: ['README.md'], allow: ['^echo'], timeoutMs: 1000 };
+  assert.deepEqual(normalizeConfig(base).fixtures, []);
+  assert.deepEqual(normalizeConfig(base).env, {});
+  assert.deepEqual(normalizeConfig({ ...base, fixtures: ['examples'], env: { NODE_ENV: 'test' }, redact: ['TOKEN'] }), {
+    ...base,
+    fixtures: ['examples'],
+    env: { NODE_ENV: 'test' },
+    redact: ['TOKEN']
+  });
+});
+
 test('loadConfig reports malformed JSON as a config error', async () => {
   const root = await mkdtemp(join(tmpdir(), 'readmesmoke-config-'));
   await writeFile(join(root, 'readmesmoke.config.json'), '{ not json');

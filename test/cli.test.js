@@ -102,6 +102,23 @@ test('a malformed allow pattern fails with a config diagnostic and usage', async
   await assert.rejects(readFile(join(root, 'marker.txt')), { code: 'ENOENT' });
 });
 
+test('malformed optional config fails before executing README commands', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'readmesmoke-cli-'));
+  await writeFile(join(root, 'README.md'), '```sh\nprintf executed > marker.txt\n```\n');
+  await writeFile(join(root, 'config.json'), JSON.stringify({
+    docs: ['README.md'],
+    allow: ['^printf '],
+    fixtures: 'README.md',
+    timeoutMs: 1000
+  }));
+
+  const result = invoke(['run', '--execute', '--root', root, '--config', 'config.json'], root);
+  assert.equal(result.status, 2);
+  assert.match(result.stderr, /config\.fixtures must be a string array/);
+  assert.match(result.stderr, /Usage:/);
+  await assert.rejects(readFile(join(root, 'marker.txt')), { code: 'ENOENT' });
+});
+
 test('an absent implicit default config continues with safe defaults', async () => {
   const root = await mkdtemp(join(tmpdir(), 'readmesmoke-cli-'));
   await writeFile(join(root, 'README.md'), '```sh\necho safe-default\n```\n');
