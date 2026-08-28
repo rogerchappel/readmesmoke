@@ -63,10 +63,25 @@ export function normalizeConfig(config: ReadmeSmokeConfig): ReadmeSmokeConfig {
     docs: nonEmptyArray(config.docs, 'docs'),
     allow,
     timeoutMs: Math.max(100, timeoutMs),
-    fixtures: config.fixtures ?? [],
-    env: config.env ?? {},
-    redact: config.redact ?? defaultConfig().redact
+    fixtures: stringArray(config.fixtures ?? [], 'fixtures'),
+    env: stringRecord(config.env ?? {}, 'env'),
+    redact: stringArray(config.redact ?? defaultConfig().redact, 'redact')
   };
+}
+
+function stringArray(value: unknown, name: string): string[] {
+  if (!Array.isArray(value) || value.some((item) => typeof item !== 'string')) {
+    throw new ConfigError(`config.${name} must be a string array`);
+  }
+  return value;
+}
+
+function stringRecord(value: unknown, name: string): Record<string, string> {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)
+    || Object.values(value).some((item) => typeof item !== 'string')) {
+    throw new ConfigError(`config.${name} must be a string-to-string object`);
+  }
+  return value as Record<string, string>;
 }
 
 function isNodeError(error: unknown): error is NodeJS.ErrnoException {
