@@ -11,6 +11,17 @@ function invoke(args, cwd = process.cwd()) {
   return spawnSync(process.execPath, [cli.pathname, ...args], { cwd, encoding: 'utf8' });
 }
 
+function subprocessDiagnostic(command, args, result) {
+  return [
+    `command: ${command}`,
+    `args: ${JSON.stringify(args)}`,
+    `spawn error: ${result.error ? `${result.error.name}: ${result.error.message}` : 'none'}`,
+    `status: ${String(result.status)}`,
+    `stdout: ${JSON.stringify(result.stdout)}`,
+    `stderr: ${JSON.stringify(result.stderr)}`
+  ].join('\n');
+}
+
 test('value-taking options reject missing and option-shaped values', () => {
   for (const option of ['--config', '--format', '--input', '--root']) {
     const command = option === '--input' ? 'report' : 'scan';
@@ -24,16 +35,23 @@ test('value-taking options reject missing and option-shaped values', () => {
 });
 
 test('options are command-aware', () => {
-  for (const [command, args, option] of [
+  const cases = [
     ['scan', ['--execute'], '--execute'],
     ['scan', ['--input', 'report.json'], '--input'],
     ['run', ['--input', 'report.json'], '--input'],
     ['report', ['--input', 'report.json', '--config', 'config.json'], '--config'],
     ['report', ['--input', 'report.json', '--execute'], '--execute']
-  ]) {
-    const result = invoke([command, ...args]);
-    assert.equal(result.status, 2);
-    assert.match(result.stderr, new RegExp(`${option} is not valid for ${command}`));
+  ];
+
+  for (let repetition = 1; repetition <= 20; repetition += 1) {
+    for (const [command, args, option] of cases) {
+      const invocation = [command, ...args];
+      const result = invoke(invocation);
+      const diagnostic = `repetition: ${repetition}\n${subprocessDiagnostic(process.execPath, [cli.pathname, ...invocation], result)}`;
+      assert.ifError(result.error);
+      assert.equal(result.status, 2, diagnostic);
+      assert.match(result.stderr, new RegExp(`${option} is not valid for ${command}`), diagnostic);
+    }
   }
 });
 
