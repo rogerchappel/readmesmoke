@@ -16,15 +16,18 @@ export async function prepareWorkspace(root: string, config: ReadmeSmokeConfig):
     if (!destinationPath || destinationPath.startsWith(`..${sep}`) || isAbsolute(destinationPath)) {
       throw new Error(`fixture must resolve inside the project root: ${fixture}`);
     }
-    return { source, destinationPath };
+    return { fixture, source, destinationPath };
   });
+  for (const { fixture, source } of fixtures) {
+    if (!await pathExists(source)) {
+      throw new Error(`configured fixture does not exist: ${fixture}`);
+    }
+  }
   const workspace = await mkdtemp(join(tmpdir(), 'readmesmoke-'));
   for (const { source, destinationPath } of fixtures) {
-    if (await pathExists(source)) {
-      const destination = join(workspace, destinationPath);
-      await mkdir(dirname(destination), { recursive: true });
-      await cp(source, destination, { recursive: true });
-    }
+    const destination = join(workspace, destinationPath);
+    await mkdir(dirname(destination), { recursive: true });
+    await cp(source, destination, { recursive: true });
   }
   return {
     path: workspace,
