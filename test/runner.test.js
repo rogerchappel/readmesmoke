@@ -48,6 +48,27 @@ test('runPlan executes a nested README command beside its fixture', async () => 
   assert.equal(result.stdout, 'nested-ok\n');
 });
 
+test('runPlan rejects a missing fixture before executing commands', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'readmesmoke-runner-'));
+  const marker = join(root, 'command-ran');
+  const fixtureCommand = {
+    ...command,
+    command: `touch ${JSON.stringify(marker)}`,
+    allowPattern: '^touch '
+  };
+
+  await assert.rejects(
+    runPlan(root, {
+      docs: ['README.md'],
+      allow: ['^touch '],
+      fixtures: ['fixtures/does-not-exist'],
+      timeoutMs: 1000
+    }, [fixtureCommand], true),
+    /configured fixture does not exist: fixtures\/does-not-exist/
+  );
+  await assert.rejects(import('node:fs/promises').then(({ access }) => access(marker)));
+});
+
 test('runPlan executes a compound command as one shell program', async () => {
   const multiline = {
     ...command,
