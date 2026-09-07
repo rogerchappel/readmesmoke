@@ -26,7 +26,9 @@ supplied with `--config` is required and must be readable.
   same-named fixtures from different directories. Each command runs from the
   copied path corresponding to its source Markdown file's directory, so a
   nested README can refer to a sibling fixture with a relative command such as
-  `node hello.js`.
+  `node hello.js`. Every configured fixture must exist; a missing file or
+  directory stops the run before any documentation command executes and names
+  the invalid fixture path in the diagnostic.
 - `timeoutMs`: finite numeric per-command timeout. Values below 100ms are raised
   to 100ms; non-numeric, `NaN`, and infinite values are rejected. The timeout is a
   hard bound: an expired command (including any background children it started) is
