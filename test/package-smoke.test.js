@@ -11,6 +11,15 @@ test('accepts a tarball containing declared entry points and promised assets', (
   assert.doesNotThrow(() => validatePackageContents(fixture.packageJson, asPackResult(fixture.validFiles)));
 });
 
+test('counts unique required paths when metadata overlaps promised assets', () => {
+  const packageJson = {
+    ...fixture.packageJson,
+    bin: { readmesmoke: './README.md', extra: './README.md' },
+    main: './README.md',
+  };
+  assert.equal(validatePackageContents(packageJson, asPackResult(fixture.validFiles)), 8);
+});
+
 test('rejects a tarball missing a required promised asset', () => {
   const missingDocs = fixture.validFiles.filter((path) => path !== 'docs/tutorials/fixture-readme-smoke.md');
   assert.throws(
