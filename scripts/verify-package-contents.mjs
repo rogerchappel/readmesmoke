@@ -32,13 +32,14 @@ export function validatePackageContents(packageJson, packResult) {
     'scripts/validate.sh',
     'scripts/validate-release-readiness.mjs',
   ];
-  const missing = [...new Set(requiredFiles)].filter((file) => !files.has(file));
+  const uniqueRequiredFiles = [...new Set(requiredFiles)];
+  const missing = uniqueRequiredFiles.filter((file) => !files.has(file));
 
   if (missing.length > 0) {
     throw new Error(`Package is missing required distribution files:\n${missing.map((file) => `- ${file}`).join('\n')}`);
   }
 
-  return requiredFiles.length;
+  return uniqueRequiredFiles.length;
 }
 
 export function main() {
