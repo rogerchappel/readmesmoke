@@ -64,25 +64,9 @@ jobs:
             npm install
           fi
 
-      - name: Validate package scripts
-        if: hashFiles('package.json') != ''
-        run: npm run check
-
-      - name: Run tests
-        if: hashFiles('package.json') != ''
-        run: npm test
-
-      - name: Run release verification
+      - name: Run release validation suite
         if: hashFiles('package.json') != ''
         run: npm run release:check
-
-      - name: Run CLI smoke
-        if: hashFiles('package.json') != ''
-        run: npm run smoke
-
-      - name: Verify package contents
-        if: hashFiles('package.json') != ''
-        run: npm run package:smoke
 
       - name: Validate repository fixtures
         run: bash scripts/validate.sh
