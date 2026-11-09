@@ -54,24 +54,26 @@ package_script_exists() {
 }
 
 choose_package_manager() {
-  if [ -f "pnpm-lock.yaml" ] && command -v pnpm >/dev/null 2>&1; then
-    printf 'pnpm\n'
-    return
+  # A lockfile determines the manager; never silently run scripts with a
+  # different installed manager when the lockfile's manager is unavailable.
+  if [ -f "pnpm-lock.yaml" ]; then
+    command -v pnpm >/dev/null 2>&1 && { printf 'pnpm\n'; return; }
+    return 1
   fi
 
-  if [ -f "package-lock.json" ] && command -v npm >/dev/null 2>&1; then
-    printf 'npm\n'
-    return
+  if [ -f "package-lock.json" ]; then
+    command -v npm >/dev/null 2>&1 && { printf 'npm\n'; return; }
+    return 1
   fi
 
-  if [ -f "yarn.lock" ] && command -v yarn >/dev/null 2>&1; then
-    printf 'yarn\n'
-    return
+  if [ -f "yarn.lock" ]; then
+    command -v yarn >/dev/null 2>&1 && { printf 'yarn\n'; return; }
+    return 1
   fi
 
-  if [ -f "bun.lock" ] && command -v bun >/dev/null 2>&1; then
-    printf 'bun\n'
-    return
+  if [ -f "bun.lock" ] || [ -f "bun.lockb" ]; then
+    command -v bun >/dev/null 2>&1 && { printf 'bun\n'; return; }
+    return 1
   fi
 
   if command -v pnpm >/dev/null 2>&1; then
