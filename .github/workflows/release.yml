@@ -10,7 +10,7 @@ permissions:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  RELEASEBOX_REF: v0.1.0
+  RELEASEBOX_REF: 9ef650354880ee84a1038d89e4522589c0f3d8b4
 
 jobs:
   release:
@@ -28,7 +28,8 @@ jobs:
       - name: Install ReleaseBox
         run: |
           set -euo pipefail
-          git clone --depth 1 --branch "$RELEASEBOX_REF" https://github.com/rogerchappel/releasebox.git /tmp/releasebox
+          git clone https://github.com/rogerchappel/releasebox.git /tmp/releasebox
+          git -C /tmp/releasebox checkout --detach "$RELEASEBOX_REF"
           npm --prefix /tmp/releasebox ci
           npm --prefix /tmp/releasebox run build
       - name: ReleaseBox readiness check
