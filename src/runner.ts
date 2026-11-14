@@ -73,7 +73,7 @@ export function runCommand(command: PlannedCommand, cwd: string, config: ReadmeS
     child.on('error', (error) => {
       clearTimeout(timer);
       clearTimeout(graceTimer);
-      resolve({ ...command, status: 'failed', exitCode: null, durationMs: Math.round(performance.now() - started), stdout, stderr, error: error.message });
+      resolve({ ...command, status: 'failed', exitCode: null, durationMs: Math.round(performance.now() - started), stdout: redactText(stdout, config.env, config.redact), stderr: redactText(stderr, config.env, config.redact), error: error.message });
     });
   });
 }
