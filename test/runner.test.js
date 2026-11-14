@@ -148,6 +148,18 @@ test('runPlan preserves configured file paths with the same filename', async () 
   assert.equal(result.stdout, '{"source":"a"}{"source":"b"}');
 });
 
+test('runCommand redacts captured output when spawning fails', async () => {
+  const secret = 'spawn-error-secret-123';
+  const result = await runCommand(
+    { ...command, command: `printf '%s' '${secret}'; printf '%s' '${secret}' >&2; read -r ignored` },
+    join(tmpdir(), `readmesmoke-missing-cwd-${Date.now()}`),
+    { docs: ['README.md'], allow: ['.*'], timeoutMs: 1000, fixtures: [], env: { SERVICE_TOKEN: secret }, redact: [] }
+  );
+  assert.equal(result.status, 'failed');
+  assert.equal(result.exitCode, null);
+  assert.match(result.error, /spawn|directory|ENOENT/i);
+});
+
 test('runCommand enforces timeoutMs on long-running foreground commands', async () => {
   const started = Date.now();
   const result = await runCommand(
